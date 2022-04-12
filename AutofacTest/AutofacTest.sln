@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutofacTest", "AutofacTest\AutofacTest.csproj", "{DB9F90E0-3DBF-4296-8DBC-B19F270F7C13}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB9F90E0-3DBF-4296-8DBC-B19F270F7C13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB9F90E0-3DBF-4296-8DBC-B19F270F7C13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB9F90E0-3DBF-4296-8DBC-B19F270F7C13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB9F90E0-3DBF-4296-8DBC-B19F270F7C13}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
