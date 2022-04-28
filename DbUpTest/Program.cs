@@ -9,22 +9,15 @@ namespace DbUpTest
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine(ConnectionString);
+            if (!AbrirConexaoPeloFirebird()) return;
             
             var upgradeEngine = DeployChanges.To
                 .FirebirdDatabase(ConnectionString)
                 .WithTransaction()
                 .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+                .JournalToFirebirdTable("SchemaVersions")
                 .LogToConsole()
                 .Build();
-            
-            if(!upgradeEngine.TryConnect(out var errorMessage))
-            {
-                Console.WriteLine(errorMessage);
-                AbrirConexaoPeloFirebird();
-                Console.WriteLine("Exiting application.");
-                return;
-            }
 
             if (upgradeEngine.IsUpgradeRequired())
             {
@@ -40,17 +33,22 @@ namespace DbUpTest
             Console.WriteLine("Exiting application.");
         }
 
-        private static void AbrirConexaoPeloFirebird()
+        private static bool AbrirConexaoPeloFirebird()
         {
             try
             {
+                Console.WriteLine($"Trying to connect to: {ConnectionString}");
                 var connection = new FbConnection(ConnectionString);
                 connection.Open();
-                Console.WriteLine("Connected by Firebird.");
+                Console.WriteLine("Connection was successful in Firebird Database.");
+                return true;
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("Connection went wrong in Firebird Database.");
+                Console.WriteLine(exception.Message);
+                Console.WriteLine("Exiting application.");
+                return false;
             }
         }
 
