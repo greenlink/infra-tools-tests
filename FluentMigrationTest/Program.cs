@@ -1,4 +1,4 @@
-﻿namespace FluentMigratorTest
+﻿namespace FluentMigrationTest
 {
     internal class Program
     {
