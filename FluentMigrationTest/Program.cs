@@ -1,39 +1,28 @@
 ﻿using System;
 using System.Reflection;
+using FluentMigrator.Exceptions;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FluentMigrationTest
 {
-    internal class Program
+    internal static class Program
     {
         public static void Main(string[] args)
         {
-            var serviceProvider = CreateServices();
-
-            // Put the database update into a scope to ensure
-            // that all resources will be disposed.
-            using (var scope = serviceProvider.CreateScope())
-            {
+            using (var scope = CreateServices().CreateScope()) 
                 UpdateDatabase(scope.ServiceProvider);
-            }
         }
         
         private static IServiceProvider CreateServices() =>
             new ServiceCollection()
-                // Add common FluentMigrator services
                 .AddFluentMigratorCore()
                 .ConfigureRunner(rb => rb
-                    // Add SQLite support to FluentMigrator
                     .AddFirebird()
-                    // Set the connection string
                     .WithGlobalConnectionString(ConnectionString)
-                    // Define the assembly containing the migrations
                     .ScanIn(Assembly.GetExecutingAssembly())
                     .For.Migrations())
-                // Enable logging to console in the FluentMigrator way
                 .AddLogging(lb => lb.AddFluentMigratorConsole())
-                // Build the service provider
                 .BuildServiceProvider(false);
 
         private static string ConnectionString =>
@@ -42,14 +31,47 @@ namespace FluentMigrationTest
         private static void UpdateDatabase(IServiceProvider serviceProvider)
         {
             var migrationRunner = serviceProvider.GetRequiredService<IMigrationRunner>();
-            
             migrationRunner.ListMigrations();
+            
+            if (migrationRunner.HasMigrationsToApplyUp())
+            {
+                Console.WriteLine("Update available.");
+                Console.WriteLine(UpdateDatabase(migrationRunner) 
+                    ? "Update was successful." 
+                    : "Update went wrong.");
+                return;
+            }
+            
+            Console.WriteLine("There are no updates.");
+        }
 
-            Console.WriteLine(migrationRunner.HasMigrationsToApplyUp()
-                ? "Update for the database available."
-                : "There are no updates for the database.");
-            // Execute the migrations
-            //migrationRunner.MigrateUp();
+        private static bool UpdateDatabase(IMigrationRunner migrationRunner)
+        {
+            try
+            {
+                migrationRunner.MigrateUp();
+                return true;
+            }
+            catch(DuplicateMigrationException duplicateMigrationException)
+            {
+                Console.WriteLine(duplicateMigrationException.Message);
+                return false;
+            }
+            catch(DatabaseOperationNotSupportedException databaseOperationNotSupportedException)
+            {
+                Console.WriteLine(databaseOperationNotSupportedException.Message);
+                return false;
+            }
+            catch(FluentMigratorException fluentMigratorException)
+            {
+                Console.WriteLine(fluentMigratorException.Message);
+                return false;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+                return false;
+            }
         }
     }
 }
