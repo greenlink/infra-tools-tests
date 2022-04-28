@@ -1,4 +1,5 @@
-﻿using Fluent
+﻿using FluentMigrator;
+
 namespace FluentMigrationTest.Migrations
 {
     [Migration(202204281018)]
