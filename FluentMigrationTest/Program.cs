@@ -41,6 +41,13 @@ namespace FluentMigrationTest
                     : "Update went wrong.");
                 return;
             }
+
+            if (ShouldDowngrade)
+            {
+                migrationRunner.MigrateDown(202204281018);
+                Console.WriteLine("Downgrade apply with success.");
+                return;
+            }
             
             Console.WriteLine("There are no updates.");
         }
@@ -73,5 +80,7 @@ namespace FluentMigrationTest
                 return false;
             }
         }
+
+        private static bool ShouldDowngrade => false;
     }
 }

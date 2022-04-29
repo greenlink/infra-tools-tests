@@ -241,6 +241,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Migrations\AddTablePeople.cs" />
+        <Compile Include="Migrations\InsertDataIntoPeople.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
